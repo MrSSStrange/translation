@@ -1,0 +1,137 @@
+/* Общие стили */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Контейнер для основного содержимого */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Стили для тулбара */
+.toolbar {
+    position: sticky;
+    top: 0;
+    background: white;
+    padding: 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Стили для выпадающих списков и кнопок в тулбаре */
+.toolbar select, .toolbar button {
+    padding: 10px 15px;
+    font-size: 14px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.toolbar select:hover, .toolbar button:hover {
+    background-color: #f1f1f1;
+    border-color: #999;
+}
+
+.toolbar select:focus, .toolbar button:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+.toolbar button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+}
+
+.toolbar button:hover {
+    background-color: #0056b3;
+}
+
+/* Стили для выпадающих списков заполнителей */
+.placeholder-select {
+    display: none; /* Скрываем по умолчанию */
+    height: 150px; /* Фиксированная высота */
+    overflow-y: auto; /* Добавляем вертикальную прокрутку */
+}
+
+.placeholder-select.visible {
+    display: inline-block; /* Показываем при добавлении класса */
+}
+
+/* Стили для контента */
+#content {
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: white;
+    min-height: 300px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    outline: none;
+}
+
+#content:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+/* Стили для кнопок внизу */
+.actions {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.actions button {
+    padding: 10px 20px;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.actions button:hover {
+    background-color: #0056b3;
+}
+
+.actions button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .toolbar {
+        flex-wrap: wrap;
+    }
+
+    .toolbar select, .toolbar button {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .actions {
+        flex-direction: column;
+    }
+
+    .actions button {
+        width: 100%;
+    }
+}
