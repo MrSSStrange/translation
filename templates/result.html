@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Результат</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #eef2f3;
+      color: #333;
+    }
+    .container {
+      max-width: 900px;
+      margin: 20px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+      justify-content: center;
+    }
+    select, button {
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      cursor: pointer;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      transition: 0.3s;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #content {
+      min-height: 300px;
+      border: 2px solid #ccc;
+      padding: 15px;
+      background: #fff;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+    h1 {
+      text-align: center;
+      font-weight: bold;
+      color: #007bff;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      background-color: white;
+    }
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+    th, td {
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #f8f9fa;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Результат</h1>
+
+  <div class="toolbar">
+    <select id="group-select" class="form-select w-auto">
+      <option value="">Выберите группу</option>
+      <option value="patient">Пациент</option>
+      <option value="representative">Представитель</option>
+      <option value="document">Документ</option>
+      <option value="visit">Визит на прием</option>
+    </select>
+
+    <select id="placeholder-select" class="form-select w-auto" style="display: none;"></select>
+    <button id="insert-button" class="btn btn-primary">Вставить заполнитель</button>
+    <button id="download-button" class="btn btn-success">Скачать</button>
+  </div>
+
+  <div id="content" contenteditable="true" class="border rounded p-3"></div>
+
+  <button onclick="window.location.href='/'" class="btn btn-secondary mt-3">Назад</button>
+</div>
+
+<script>
+  fetch('/output.html')
+          .then(response => response.text())
+          .then(html => {
+            document.getElementById('content').innerHTML = html;
+          })
+          .catch(error => console.error('Ошибка загрузки содержимого:', error));
+
+  const placeholders = {
+    patient: ["пациент.номер_договора", "пациент.дата_договора", "пациент.дата_рождения", "пациент.фио_полное", "пациент.фио_фамилия_инициалы", "пациент.пол", "пациент.документ_тип", "пациент.документ_ном_серия", "пациент.документ_ном_номер", "пациент.документ_дата", "пациент.документ_выдал", "пациент.номер_телефона", "пациент.ИНН", "пациент.СНИЛС", "пациент.адрес", "пациент.адрес_город", "пациент.адрес_улица", "пациент.адрес_дом", "пациент.место_работы", "пациент.должность"],
+    representative: ["пациент.представитель_фио", "пациент.представитель_дата_рождения", "пациент.представитель_документ_тип", "пациент.представитель_документ_номер", "пациент.представитель_документ_ном_серия", "пациент.представитель_документ_ном_номер", "пациент.представитель_документ_дата", "пациент.представитель_документ_выдал", "пациент.представитель_адрес", "пациент.представитель_ИНН"],
+    document: ["документ.текущая_дата", "документ.текущая_дата_чч", "документ.текущая_дата_мин", "документ.текущая_дата_сек", "документ.текущая_дата_дд", "документ.текущая_дата_дд_мм_гггг", "документ.текущая_дата_дд_мммм", "документ.текущая_дата_гггг", "документ.текущая_дата_плюс_1", "документ.текущая_дата_плюс_7"],
+    visit: ["счет.услуги_итого_количество", "счет.услуги_итого_цена", "счет.услуги_итого_сумма", "счет.услуги_итого_сумма_прописью", "счет.датаДДММГГ", "счет.номер_договора", "счет.специалист.фио_полное", "счет.специалист.фио_сокращенное", "счет.специалист.специализация", "счет.услуги[]позиция", "счет.услуги[]наименование", "счет.услуги[]тип", "счет.услуги[]описание", "счет.услуги[]количество", "счет.услуги[]цена", "счет.услуги[]скидка", "счет.услуги[]скидка_строка", "счет.услуги[]сумма"]
+  };
+
+  document.getElementById("group-select").addEventListener("change", function () {
+    const group = this.value;
+    const placeholderSelect = document.getElementById("placeholder-select");
+    if (group && placeholders[group]) {
+      placeholderSelect.innerHTML = "<option value=''>Выберите заполнитель</option>" +
+              placeholders[group].map(p => `<option value="{{${p}}}">{{${p}}}</option>`).join('');
+      placeholderSelect.style.display = "inline-block";
+    } else {
+      placeholderSelect.style.display = "none";
+    }
+  });
+
+  function insertPlaceholder() {
+    const placeholderSelect = document.getElementById("placeholder-select");
+    const placeholder = placeholderSelect.value;
+
+    if (!placeholder) {
+      alert("Выберите заполнитель!");
+      return;
+    }
+
+    const contentDiv = document.getElementById("content");
+    if (contentDiv) {
+      const selection = window.getSelection();
+
+      // Получаем текущую позицию курсора
+      const range = selection.getRangeAt(0);
+      const placeholderNode = document.createTextNode(placeholder);
+
+      // Вставляем заполнитель в позицию курсора
+      range.insertNode(placeholderNode);
+
+      // Перемещаем курсор после вставленного текста
+      range.setStartAfter(placeholderNode);
+      range.setEndAfter(placeholderNode);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    } else {
+      alert("Контент не найден!");
+    }
+  }
+
+  document.getElementById("insert-button").addEventListener("click", insertPlaceholder);
+
+  document.addEventListener("keydown", function (event) {
+    const isCtrl = event.ctrlKey || event.metaKey;
+    const key = event.key.toLowerCase();
+    const isV = key === "v" || key === "м";
+
+    if (isCtrl && isV) {
+      event.preventDefault();
+      insertPlaceholder();
+    }
+  });
+</script>
+</body>
+</html>
